@@ -1,43 +1,18 @@
 package ru.dusniz.listentimechatswebsocketservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.dusniz.listentimechatswebsocketservice.dto.ChatRequest;
 import ru.dusniz.listentimechatswebsocketservice.dto.ChatResponse;
-import ru.dusniz.listentimechatswebsocketservice.model.Message;
 import ru.dusniz.listentimechatswebsocketservice.service.ChatService;
-import ru.dusniz.listentimechatswebsocketservice.service.MessageService;
-
 import java.util.List;
 
 @Controller
 public class ChatController {
-
-    @Autowired private SimpMessagingTemplate messagingTemplate;
-    @Autowired private MessageService messageService;
     @Autowired private ChatService chatService;
-
-
-    @MessageMapping("/messages")
-    public void sendMessage(@Payload Message message) throws InterruptedException {
-        var savedMessage = messageService.saveMessage(
-                message.getChatId(),
-                message.getSenderId(),
-                message.getContent()
-        );
-
-        messagingTemplate.convertAndSendToUser(
-                String.valueOf(savedMessage.getChatId()),
-                "/queue/messages",
-                savedMessage
-        );
-    }
 
     @GetMapping("/chats")
     public ChatResponse getAllChats() {
